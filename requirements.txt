@@ -1,0 +1,72 @@
+# Core Scientific Computing
+numpy>=1.21.0
+pandas>=1.3.0
+scipy>=1.7.0
+xarray>=0.19.0
+
+# Geospatial & Remote Sensing
+gdal>=3.3.0
+rasterio>=1.2.0
+geopandas>=0.10.0
+pyproj>=3.2.0
+fiona>=1.8.20
+shapely>=1.8.0
+
+# Altimetry & Ice Sheet Analysis
+netCDF4>=1.5.7
+h5py>=3.3.0
+pyproj>=3.2.0
+
+# Machine Learning & Deep Learning
+scikit-learn>=1.0.0
+tensorflow>=2.8.0
+torch>=1.10.0
+torchvision>=0.11.0
+keras>=2.8.0
+
+# Visualization
+matplotlib>=3.4.0
+seaborn>=0.11.0
+plotly>=5.3.0
+folium>=0.12.0
+bokeh>=2.4.0
+
+# Google Earth Engine
+earthengine-api>=0.1.300
+
+# Image Processing
+scikit-image>=0.18.0
+opencv-python>=4.5.0
+Pillow>=8.3.0
+
+# Data I/O
+pyyaml>=5.4.0
+json5>=0.9.0
+toml>=0.10.0
+
+# Utilities
+tqdm>=4.62.0
+joblib>=1.1.0
+dask>=2021.9.0
+
+# Testing & Quality
+pytest>=6.2.0
+pytest-cov>=2.12.0
+flake8>=3.9.0
+black>=21.9b0
+
+# Jupyter & Interactive
+jupyterlab>=3.1.0
+ipywidgets>=7.6.0
+ipython>=7.27.0
+
+# Documentation
+sphinx>=4.2.0
+sphinx-rtd-theme>=1.0.0
+
+# Version Control & CI/CD
+pre-commit>=2.15.0
+
+# Specific for Ice Sheet Modeling
+# Note: Some packages like PISM, BISICLES need separate installation
+# See documentation for ice sheet model installation
