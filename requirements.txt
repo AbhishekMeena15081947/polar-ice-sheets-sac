@@ -69,4 +69,12 @@ pre-commit>=2.15.0
 
 # Specific for Ice Sheet Modeling
 # Note: Some packages like PISM, BISICLES need separate installation
+
+# Web Application Framework
+Flask>=3.0.0
+Flask-CORS>=4.0.0
+gunicorn>=21.2.0
+
+# API & Data Handling
+requests>=2.31.0
 # See documentation for ice sheet model installation
