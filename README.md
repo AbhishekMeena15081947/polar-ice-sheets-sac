@@ -278,5 +278,64 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+## 🚀 Running the Real-Time Monitoring Application
+
+This project includes a **working real-time polar ice monitoring web application** with live data from NSIDC.
+
+### 💻 Quick Start (Local)
+
+```bash
+# Clone the repository
+git clone https://github.com/AbhishekMeena15081947/polar-ice-sheets-sac.git
+cd polar-ice-sheets-sac
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the application
+python -m app.app
+```
+
+Open your browser and navigate to `http://localhost:5000`
+
+### 🐳 Docker Deployment
+
+```bash
+# Build the Docker image
+docker build -t polar-ice-monitor .
+
+# Run the container
+docker run -p 5000:5000 polar-ice-monitor
+```
+
+Access the dashboard at `http://localhost:5000`
+
+### 🌐 API Endpoints
+
+The application provides the following REST API endpoints:
+
+- `GET /api/status` - Full ice sheet status for both hemispheres
+- `GET /api/current` - Current sea ice extent (Arctic & Antarctic)
+- `GET /api/monthly/<hemisphere>` - Monthly data (north/south)
+- `GET /api/historical/<hemisphere>` - Historical comparison
+- `GET /api/health` - Health check
+- `GET /api/refresh` - Force data refresh
+
+### 📊 Features
+
+✅ **Real-time data** from NSIDC Sea Ice Index
+✅ **Interactive dashboard** with live visualizations
+✅ **REST API** for programmatic access
+✅ **Auto-refresh** every 6 hours
+✅ **Responsive design** works on all devices
+✅ **Docker support** for easy deployment
+
+### 🛠️ Tech Stack
+
+- **Backend**: Flask + Python 3.11
+- **Frontend**: HTML5 + JavaScript + Chart.js
+- **Data Source**: NSIDC API
+- **Deployment**: Docker + Gunicorn
+
 **Last Updated**: November 2025
 **Status**: Active Development
