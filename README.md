@@ -1,5 +1,20 @@
 # Polar Ice Sheets Research (SAC)
 
+<div align="center">
+
+![Polar Ice Sheets](https://svs.gsfc.nasa.gov/vis/a030000/a030800/a030877/frames/5760x3240_16x9_30p/BlackMarble_2016_Arctic_1920x1080.png)
+
+*Polar ice sheets play a crucial role in global climate and sea level dynamics*
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Research](https://img.shields.io/badge/Research-Active-brightgreen.svg)](#)
+[![SAC](https://img.shields.io/badge/Institution-SAC-orange.svg)](#)
+
+</div>
+
+---
+
 ## Overview
 This repository contains research on polar ice sheet mass balance, dynamics, and sea level rise using state-of-the-art satellite remote sensing techniques and numerical modeling approaches. The project focuses on advancing methodologies for monitoring and understanding polar ice sheet changes and their contribution to global sea level rise.
 
@@ -91,6 +106,32 @@ polar-ice-sheets-sac/
 
 ## Research Components
 
+
+
+<div align="center">
+
+### 🛰️ Satellite Observations & Ice Sheet Monitoring
+
+<table>
+<tr>
+<td width="50%">
+
+![Greenland Ice Sheet](https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Greenland%27s_ice_sheet.jpg/800px-Greenland%27s_ice_sheet.jpg)
+
+*Greenland Ice Sheet - ESA/Envisat*
+
+</td>
+<td width="50%">
+
+![Antarctic Ice](https://earthobservatory.nasa.gov/ContentWOC/images/decadal/ice_shelf/conger_oli_2022080_lrg.jpg)
+
+*Antarctic Ice Shelf - NASA Earth Observatory*
+
+</td>
+</tr>
+</table>
+
+</div>
 ### Component 1: Altimetry-based Mass Balance
 **Objective**: Develop and refine algorithms for estimating ice sheet mass changes using satellite altimetry.
 
