@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polar Ice Sheet Real-Time Monitor | SAC</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a1f3d 0%, #1a3a5c 50%, #2a5f8f 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .status-banner {
+            background: rgba(30, 144, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #1e90ff;
+        }
+
+        .status-banner .last-update {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #4dd0e1;
+        }
+
+        .metric {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #00e5ff;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .large-chart {
+            height: 400px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #00e5ff;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ff0000;
+            margin: 20px 0;
+        }
+
+        .refresh-btn {
+            background: #1e90ff;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .refresh-btn:hover {
+            background: #00bfff;
+            transform: scale(1.05);
+        }
+
+        .data-source {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>❄️ Polar Ice Sheet Real-Time Monitor</h1>
+            <p class="subtitle">Live Satellite Data from NSIDC | Space Applications Centre (SAC)</p>
+            <button class="refresh-btn" onclick="refreshData()">🔄 Refresh Data</button>
+        </header>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading real-time ice sheet data...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="content" style="display: none;">
+            <div class="status-banner">
+                <h3>📊 Current Status</h3>
+                <p id="status-text">Monitoring Arctic and Antarctic ice sheets in real-time</p>
+                <p class="last-update" id="last-update">Last updated: Loading...</p>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h2>❄️ Arctic Ice Extent</h2>
+                    <div class="metric" id="arctic-extent">--</div>
+                    <p class="metric-label">million km²</p>
+                    <p class="data-source" id="arctic-source">Data source: NSIDC</p>
+                </div>
+
+                <div class="card">
+                    <h2>🌍 Antarctic Ice Extent</h2>
+                    <div class="metric" id="antarctic-extent">--</div>
+                    <p class="metric-label">million km²</p>
+                    <p class="data-source" id="antarctic-source">Data source: NSIDC</p>
+                </div>
+
+                <div class="card">
+                    <h2>📈 Global Ice Extent</h2>
+                    <div class="metric" id="total-extent">--</div>
+                    <p class="metric-label">million km²</p>
+                    <p class="data-source">Combined Arctic + Antarctic</p>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card" style="grid-column: span 2;">
+                    <h2>📉 Ice Extent Comparison</h2>
+                    <div class="chart-container large-chart">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>🛰️ Data Sources: NSIDC Sea Ice Index, SARAL/AltiKa, ICESat-2, CryoSat-2</p>
+            <p>Space Applications Centre (SAC) | Real-Time Polar Ice Monitoring System</p>
+        </footer>
+    </div>
+
+    <script>
+        let comparisonChart = null;
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/status');
+                if (!response.ok) throw new Error('Failed to fetch data');
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    displayData(result.data);
+                    document.getElementById('last-update').textContent = 
+                        `Last updated: ${new Date(result.timestamp).toLocaleString()}`;
+                } else {
+                    throw new Error(result.message || 'Unknown error');
+                }
+            } catch (error) {
+                showError('Error loading data: ' + error.message);
+            }
+        }
+
+        function displayData(data) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+
+            // Update metrics
+            const arcticExtent = data.arctic.extent_million_km2;
+            const antarcticExtent = data.antarctic.extent_million_km2;
+            const totalExtent = arcticExtent + antarcticExtent;
+
+            document.getElementById('arctic-extent').textContent = arcticExtent.toFixed(2);
+            document.getElementById('antarctic-extent').textContent = antarcticExtent.toFixed(2);
+            document.getElementById('total-extent').textContent = totalExtent.toFixed(2);
+
+            document.getElementById('arctic-source').textContent = 
+                `Data source: ${data.arctic.data_source}`;
+            document.getElementById('antarctic-source').textContent = 
+                `Data source: ${data.antarctic.data_source}`;
+
+            // Create comparison chart
+            createComparisonChart(arcticExtent, antarcticExtent);
+        }
+
+        function createComparisonChart(arctic, antarctic) {
+            const ctx = document.getElementById('comparisonChart');
+            
+            if (comparisonChart) {
+                comparisonChart.destroy();
+            }
+
+            comparisonChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Arctic', 'Antarctic', 'Total'],
+                    datasets: [{
+                        label: 'Ice Extent (million km²)',
+                        data: [arctic, antarctic, arctic + antarctic],
+                        backgroundColor: [
+                            'rgba(30, 144, 255, 0.8)',
+                            'rgba(0, 229, 255, 0.8)',
+                            'rgba(77, 208, 225, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(30, 144, 255, 1)',
+                            'rgba(0, 229, 255, 1)',
+                            'rgba(77, 208, 225, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#ffffff',
+                                font: { size: 14 }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Current Sea Ice Extent by Region',
+                            color: '#ffffff',
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#ffffff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#ffffff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'none';
+            const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'block';
+            errorDiv.innerHTML = `<strong>⚠️ Error:</strong> ${message}`;
+        }
+
+        function refreshData() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            fetchData();
+        }
+
+        // Auto-refresh every 30 minutes
+        setInterval(fetchData, 30 * 60 * 1000);
+
+        // Initial load
+        fetchData();
+    </script>
+</body>
+</html>
